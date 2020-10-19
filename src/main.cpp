@@ -7,6 +7,7 @@
 #include "express-draw/Camera.h"
 #include "express-draw/CameraTypes.h"
 #include "express-draw/TextureIdentifier.h"
+#include "express-draw-opengl-glfw/font/FontLoader.h"
 
 int main() {
     std::cout << "Hello, World!!" << std::endl;
@@ -20,9 +21,18 @@ int main() {
     };
 
     context.addDirectoryToFileHashes("assets/");
+    const auto arialFont = Font::loadFromFontFile("assets/fonts/Arial.ttf", "Arial");
+    context.textures.emplace(
+            std::get<0>(arialFont).textureIdentifier,
+            std::get<1>(arialFont));
+
+//    const auto droidFont = Font::loadFromFontFile("assets/fonts/DroidSans.ttf", "Droid");
+//    context.textures.emplace(
+//            std::get<0>(droidFont).textureIdentifier,
+//            std::get<1>(droidFont));
 
     const auto camera = Draw::OrthographicSceneCamera{
-            .zoom=0.5F
+            .zoom=1.F
     };
 
     while(context.isRunning()) {
@@ -34,7 +44,7 @@ int main() {
 
         Draw::draw(context, Draw::Quad{
                 .position{0.F,0.F},
-                .size{30.F, 30.F}, //viewport is -1 -> 1 until camera is setup
+                .size{30.F, 30.F},
                 .rotation = 0.F,
                 .color{0.F, 0.F, 1.F, 1.F},
                 .borderWidth=1.F
@@ -51,7 +61,7 @@ int main() {
         Draw::draw(context, Draw::Sprite{
                 .texture{TextureIdentifier{"assets/textures/wooden_crate.png"}},
                 .position{0.F,-50.F},
-                .size{30.F, 30.F}, //viewport is -1 -> 1 until camera is setup
+                .size{30.F, 30.F},
                 .rotation = 0.F,
                 .color{1.F, 1.F, 1.F, 1.F}
         });
@@ -59,7 +69,7 @@ int main() {
         Draw::draw(context, Draw::Sprite{
                 .texture{TextureIdentifier{"assets/textures/green_bush.png"}},
                 .position{50.F,-50.F},
-                .size{30.F, 30.F}, //viewport is -1 -> 1 until camera is setup
+                .size{30.F, 30.F},
                 .rotation = 0.F,
                 .color{1.F, 1.F, 1.F, 1.F}
         });
@@ -75,6 +85,15 @@ int main() {
                 .startPosition{0.F, 0.F},
                 .endPosition{0.F, 100.F},
                 .color{0.F, 1.F, 0.F, 1.F},
+        });
+
+
+        Draw::draw(context, Draw::Sprite{
+                .texture{TextureIdentifier{"assets/fonts/Arial.ttf"}},
+                .position{-1000.F,-100.F},
+                .size{2867.F, 45.F},
+                .rotation = 0.F,
+                .color{1.F, 1.F, 1.F, 1.F}
         });
 
 

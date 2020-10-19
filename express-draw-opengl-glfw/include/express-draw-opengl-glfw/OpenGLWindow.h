@@ -1,6 +1,6 @@
 
-#ifndef EXPRESS_DRAW_OPENGLWINDOW_H
-#define EXPRESS_DRAW_OPENGLWINDOW_H
+#ifndef EXPRESS_DRAW_OPENGL_GLFW__OPENGLWINDOW_H
+#define EXPRESS_DRAW_OPENGL_GLFW__OPENGLWINDOW_H
 
 
 #include <glm/glm.hpp>
@@ -24,4 +24,4 @@ public:
 
 };
 
-#endif //EXPRESS_DRAW_OPENGLWINDOW_H
+#endif
