@@ -11,16 +11,15 @@
 
 
 struct RenderableCharacter {
-    glm::vec2 position;
-    glm::vec2 size;
-    float rotation;
+    Draw::Transform2D transform;
     glm::vec4 color;
     Draw::Rect textureRegion;
 };
 
 struct RenderableText {
-    const TextureIdentifier texture;
-    const std::vector<RenderableCharacter> characters;
+    Draw::Transform2D transform;
+    Draw::TextureIdentifier texture;
+    std::vector<RenderableCharacter> characters;
 };
 
 RenderableText convertToRenderableText(Draw::OpenGL_GLFW_Context& context, const Draw::TextBlock& input);

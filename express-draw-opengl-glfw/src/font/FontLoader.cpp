@@ -145,7 +145,7 @@ std::tuple<Font::FontInfo, Texture> Font::loadFromFontFile(std::string_view font
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4); // untested
 
     const auto fontInfo = FontInfo {
-        .textureIdentifier{TextureIdentifier{std::string{fontFilePath} + std::to_string(fontPixelSize)}},
+        .textureIdentifier{Draw::TextureIdentifier{std::string{fontFilePath} + std::to_string(fontPixelSize)}},
         .characters{characters},
         .lineHeight = fontPixelSize
     };

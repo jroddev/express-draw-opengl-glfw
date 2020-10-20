@@ -12,12 +12,11 @@ namespace {
         layout (location = 0) in vec2 aPos;
         layout (location = 1) in vec2 aTexCoord;
 
+        uniform mat4 model;
         uniform mat4 view;
         uniform mat4 projection;
-        uniform vec2 position;
-        uniform vec2 size;
-        uniform vec4 colorTint;
 
+        uniform vec4 colorTint;
         uniform vec2 textureRegionOffset;
         uniform vec2 textureRegionSize;
 
@@ -27,11 +26,7 @@ namespace {
         void main() {
             textureCoord = textureRegionOffset + (aTexCoord * textureRegionSize);
             textureColorTint = colorTint;
-
-            float x = position.x + (aPos.x * size.x);
-            float y = position.y + (aPos.y * size.y);
-            vec4 worldSpacePosition = vec4(x, y, 0, 1);
-            gl_Position = projection * view * worldSpacePosition;
+            gl_Position = projection * view * model * vec4(aPos, 0.0, 1.0);
         }
     )"""";
 
@@ -112,15 +107,13 @@ namespace {
 namespace Draw {
     template<>
     void draw(OpenGL_GLFW_Context &context, const RenderableText& data) {
-        static const auto shader = Shader{"sprite-shader", vertexShader, fragmentShader};
-        static const auto projectionMatrixLocation = glGetUniformLocation(shader, "projection");
+        static const auto shader = Shader{"text-shader", vertexShader, fragmentShader};
+        static const auto modelMatrixLocation = glGetUniformLocation(shader, "model");
         static const auto viewMatrixLocation = glGetUniformLocation(shader, "view");
-        static const auto positionLocation = glGetUniformLocation(shader, "position");
-        static const auto sizeLocation = glGetUniformLocation(shader, "size");
+        static const auto projectionMatrixLocation = glGetUniformLocation(shader, "projection");
         static const auto colorLocation = glGetUniformLocation(shader, "colorTint");
         static const auto textureRegionOffsetLocation = glGetUniformLocation(shader, "textureRegionOffset");
         static const auto textureRegionSizeLocation = glGetUniformLocation(shader, "textureRegionSize");
-
 
         static const auto mesh = buildMesh();
 
@@ -132,13 +125,12 @@ namespace Draw {
             glBindVertexArray(mesh.vao);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ebo);
             glUseProgram(shader);
+            glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(
+                    data.transform.getGetLocalSpaceMatrix() * character.transform.getGetLocalSpaceMatrix()
+                    ));
             glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(context.cameraViewMatrix));
             glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(context.cameraProjectionMatrix));
-            glUniform2fv(positionLocation, 1, glm::value_ptr(character.position));
-            glUniform2fv(sizeLocation, 1, glm::value_ptr(character.size));
             glUniform4fv(colorLocation, 1, glm::value_ptr(character.color));
-
-            // Need to include y here as well. Not all take up 0-1 vertically
             glUniform2fv(textureRegionOffsetLocation, 1, glm::value_ptr(glm::vec2{character.textureRegion.x, character.textureRegion.y}));
             glUniform2fv(textureRegionSizeLocation, 1, glm::value_ptr(glm::vec2{character.textureRegion.width, character.textureRegion.height}));
 

@@ -19,7 +19,7 @@ namespace Font {
 
     using FontCharacterData = std::unordered_map<char, CharacterInfo>;
     struct FontInfo {
-        TextureIdentifier textureIdentifier;
+        Draw::TextureIdentifier textureIdentifier;
         FontCharacterData characters;
         int lineHeight;
     };

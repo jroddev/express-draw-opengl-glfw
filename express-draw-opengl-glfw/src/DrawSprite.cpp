@@ -14,23 +14,21 @@ namespace Draw {
         layout (location = 0) in vec2 aPos;
         layout (location = 1) in vec2 aTexCoord;
 
+        uniform mat4 model;
         uniform mat4 view;
         uniform mat4 projection;
-        uniform vec2 position;
-        uniform vec2 size;
+
         uniform vec4 colorTint;
+        uniform vec2 textureRegionOffset;
+        uniform vec2 textureRegionSize;
 
         out vec4 textureColorTint;
         out vec2 textureCoord;
 
         void main() {
-            textureCoord = aTexCoord;
+            textureCoord = textureRegionOffset + (aTexCoord * textureRegionSize);
             textureColorTint = colorTint;
-
-            float x = position.x + (aPos.x * size.x);
-            float y = position.y + (aPos.y * size.y);
-            vec4 worldSpacePosition = vec4(x, y, 0, 1);
-            gl_Position = projection * view * worldSpacePosition;
+            gl_Position = projection * view * model * vec4(aPos, 0.0, 1.0);
         }
     )"""";
 
@@ -109,26 +107,16 @@ namespace Draw {
     template<>
     void draw(OpenGL_GLFW_Context& context, const Sprite& data) {
         static const auto shader = Shader{"sprite-shader", vertexShader, fragmentShader};
-        static const auto projectionMatrixLocation = glGetUniformLocation(shader, "projection");
+        static const auto modelMatrixLocation = glGetUniformLocation(shader, "model");
         static const auto viewMatrixLocation = glGetUniformLocation(shader, "view");
-        static const auto positionLocation = glGetUniformLocation(shader, "position");
-        static const auto sizeLocation = glGetUniformLocation(shader, "size");
+        static const auto projectionMatrixLocation = glGetUniformLocation(shader, "projection");
         static const auto colorLocation = glGetUniformLocation(shader, "colorTint");
+        static const auto textureRegionOffsetLocation = glGetUniformLocation(shader, "textureRegionOffset");
+        static const auto textureRegionSizeLocation = glGetUniformLocation(shader, "textureRegionSize");
+
         static const auto mesh = buildMesh();
 
-        const auto textureHash = static_cast<size_t>(data.texture);
-        if (!context.textures.contains(data.texture)) {
-            const auto textureFilePair = context.fileHashes.find(textureHash);
-            if (textureFilePair == context.fileHashes.end()) {
-                throw std::runtime_error(
-                        "Could not find filehash: " +
-                        std::to_string(textureHash) +
-                        ". Did you pre-cache this directory in context?");
-            }
-            const auto textureFile = textureFilePair->second;
-            context.textures.emplace(data.texture, Texture{textureFile});
-        }
-        const auto texture = context.textures.find(data.texture)->second;
+        const auto texture = context.getOrLoadTexture(data.texture);
         texture.bind();
 
         //////////////////////////
@@ -136,11 +124,12 @@ namespace Draw {
         glBindVertexArray(mesh.vao);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ebo);
         glUseProgram(shader);
+        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(data.transform.getGetLocalSpaceMatrix()));
         glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(context.cameraViewMatrix));
         glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(context.cameraProjectionMatrix));
-        glUniform2fv(positionLocation, 1, glm::value_ptr(data.position));
-        glUniform2fv(sizeLocation, 1, glm::value_ptr(data.size));
         glUniform4fv(colorLocation, 1, glm::value_ptr(data.color));
+        glUniform2fv(textureRegionOffsetLocation, 1, glm::value_ptr(glm::vec2{data.textureRegion.x, data.textureRegion.y}));
+        glUniform2fv(textureRegionSizeLocation, 1, glm::value_ptr(glm::vec2{data.textureRegion.width, data.textureRegion.height}));
         glDrawElements(GL_TRIANGLES, mesh.indicesSize, GL_UNSIGNED_INT, nullptr);
     }
 
