@@ -90,7 +90,7 @@ namespace Draw {
     }
 
     template<>
-    void draw(OpenGL_GLFW_Context& context, Quad data) {
+    void draw(OpenGL_GLFW_Context& context, const Quad& data) {
         static const auto shader = Shader{"wireframe-shader", vertexShader, fragmentShader};
         static const auto projectionMatrixLocation = glGetUniformLocation(shader, "projection");
         static const auto viewMatrixLocation = glGetUniformLocation(shader, "view");
@@ -114,7 +114,7 @@ namespace Draw {
     }
 
     template<>
-    void drawWireframe(OpenGL_GLFW_Context& context, Quad data) {
+    void drawWireframe(OpenGL_GLFW_Context& context, const Quad& data) {
         static const auto shader = Shader{"wireframe-shader", vertexShader, fragmentShader};
         static const auto projectionMatrixLocation = glGetUniformLocation(shader, "projection");
         static const auto viewMatrixLocation = glGetUniformLocation(shader, "view");

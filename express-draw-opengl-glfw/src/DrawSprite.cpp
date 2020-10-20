@@ -107,7 +107,7 @@ namespace Draw {
     }
 
     template<>
-    void draw(OpenGL_GLFW_Context& context, Sprite data) {
+    void draw(OpenGL_GLFW_Context& context, const Sprite& data) {
         static const auto shader = Shader{"sprite-shader", vertexShader, fragmentShader};
         static const auto projectionMatrixLocation = glGetUniformLocation(shader, "projection");
         static const auto viewMatrixLocation = glGetUniformLocation(shader, "view");

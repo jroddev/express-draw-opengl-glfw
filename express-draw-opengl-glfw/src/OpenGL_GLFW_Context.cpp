@@ -23,3 +23,39 @@ void Draw::OpenGL_GLFW_Context::addDirectoryToFileHashes(const std::string_view 
     std::cout << "----" << std::endl;
 }
 
+Texture Draw::OpenGL_GLFW_Context::getOrLoadTexture(const TextureIdentifier identifier) {
+    const auto entry = textures.find(identifier);
+    if (entry == textures.end()) {
+        const auto fileHashEntry = fileHashes.find(static_cast<size_t>(identifier));
+        if (fileHashEntry == fileHashes.end()) {
+            throw std::runtime_error(
+                    "Could not find filehash: " +
+                    std::to_string(static_cast<size_t>(identifier)) +
+                    ". Did you pre-cache this directory in context?");
+        }
+        const auto textureFilePath = fileHashEntry->second;
+        const auto texture = Texture{textureFilePath};
+        textures.emplace(identifier, texture);
+        return texture;
+    } else {
+        return entry->second;
+    }
+}
+
+Font::FontInfo Draw::OpenGL_GLFW_Context::getOrLoadFont(const std::string& fontPath, int size) {
+    const auto fontIdentifier = fontPath + std::to_string(size);
+    const auto entry = fonts.find(fontIdentifier);
+    if (entry == fonts.end()) {
+        const auto [fontInfo, fontTexture] = Font::loadFromFontFile("assets/fonts/Arial.ttf");
+        fonts.emplace(
+                fontIdentifier,
+                fontInfo);
+        textures.emplace(
+                fontInfo.textureIdentifier,
+                fontTexture);
+        return fontInfo;
+    } else {
+        return entry->second;
+    }
+}
+

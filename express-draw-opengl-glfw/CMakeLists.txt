@@ -62,7 +62,7 @@ add_library(express-draw-opengl-glfw
         src/DrawSprite.cpp
         src/Texture.cpp
         src/DrawText.cpp
-        src/font/FontLoader.cpp)
+        src/font/FontLoader.cpp include/express-draw-opengl-glfw/TextRenderer.h src/TextRenderer.cpp)
 target_include_directories(express-draw-opengl-glfw
         PUBLIC
         ${express-draw_SOURCE_DIR}/include/

@@ -47,7 +47,7 @@ namespace Draw {
     }
 
     template<>
-    void drawWireframe(OpenGL_GLFW_Context& context, Line data) {
+    void drawWireframe(OpenGL_GLFW_Context& context, const Line& data) {
         static const auto shader = Shader{"wireframe-shader", vertexShader, fragmentShader};
         static const auto projectionMatrixLocation = glGetUniformLocation(shader, "projection");
         static const auto viewMatrixLocation = glGetUniformLocation(shader, "view");

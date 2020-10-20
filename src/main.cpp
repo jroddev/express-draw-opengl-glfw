@@ -6,12 +6,11 @@
 #include "express-draw/DrawTypes.h"
 #include "express-draw/Camera.h"
 #include "express-draw/CameraTypes.h"
-#include "express-draw/TextureIdentifier.h"
-#include "express-draw-opengl-glfw/font/FontLoader.h"
+#include "express-draw-opengl-glfw/TextRenderer.h"
+
 
 int main() {
     std::cout << "Hello, World!!" << std::endl;
-
 
     auto context = Draw::OpenGL_GLFW_Context{
         OpenGLWindow::Props{
@@ -21,19 +20,16 @@ int main() {
     };
 
     context.addDirectoryToFileHashes("assets/");
-    const auto arialFont = Font::loadFromFontFile("assets/fonts/Arial.ttf", "Arial");
-    context.textures.emplace(
-            std::get<0>(arialFont).textureIdentifier,
-            std::get<1>(arialFont));
-
-//    const auto droidFont = Font::loadFromFontFile("assets/fonts/DroidSans.ttf", "Droid");
-//    context.textures.emplace(
-//            std::get<0>(droidFont).textureIdentifier,
-//            std::get<1>(droidFont));
 
     const auto camera = Draw::OrthographicSceneCamera{
             .zoom=1.F
     };
+
+    const auto textToRender = convertToRenderableText(context, Draw::TextBlock{
+        .font {"assets/fonts/Arial.ttf"},
+        .fontSize = 48,
+        .text{"Hello there from the text renderer!"}
+    });
 
     while(context.isRunning()) {
         Draw::startFrame(context);
@@ -89,12 +85,14 @@ int main() {
 
 
         Draw::draw(context, Draw::Sprite{
-                .texture{TextureIdentifier{"assets/fonts/Arial.ttf"}},
+                .texture{TextureIdentifier{"assets/fonts/Arial.ttf48"}},
                 .position{-1000.F,-100.F},
                 .size{2867.F, 45.F},
                 .rotation = 0.F,
                 .color{1.F, 1.F, 1.F, 1.F}
         });
+
+        Draw::draw(context, textToRender);
 
 
 

@@ -10,7 +10,7 @@
 #include "OpenGLWindow.h"
 
 #include <unordered_map>
-
+#include <express-draw-opengl-glfw/font/FontLoader.h>
 
 
 namespace Draw {
@@ -27,6 +27,10 @@ namespace Draw {
 
         std::unordered_map<std::size_t, std::string> fileHashes;
         std::unordered_map<const TextureIdentifier, Texture, TextureIdentifierHasher, TextureIdentifierCompare> textures;
+        std::unordered_map<std::string, Font::FontInfo> fonts;
+
+        Texture getOrLoadTexture(TextureIdentifier identifier);
+        Font::FontInfo getOrLoadFont(const std::string& fontPath, int size);
     };
 }
 

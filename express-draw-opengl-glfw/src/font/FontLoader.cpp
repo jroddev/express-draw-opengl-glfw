@@ -17,10 +17,14 @@
 using CharacterRange = std::pair<unsigned int, unsigned int>; // 0 -> 128
 
 // pixel coord to [0,1] normalised texture coord within atlas
-std::pair<float, float> getTextureCoord(const glm::ivec2 atlasSize, uint leftPixelPosition, uint rightPixelPosition) {
+Draw::Rect getTextureRegion(const glm::ivec2 atlasSize, uint leftPixelPosition, uint rightPixelPosition, uint pixelHeight) {
+    const auto a = float(leftPixelPosition) / float(atlasSize.x);
+    const auto b = float(rightPixelPosition) / float(atlasSize.x);
     return {
-      leftPixelPosition / atlasSize.x,
-      rightPixelPosition / atlasSize.x
+        .x = a,
+        .y = 0.F,
+        .width = b - a,
+        .height = float(pixelHeight) / float(atlasSize.y)
     };
 }
 
@@ -100,20 +104,21 @@ Font::FontCharacterData getCharacterInfo(const FT_Face& face, const CharacterRan
         }
 
         const auto pixelSize = glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows);
-        const auto textureCoords = getTextureCoord(atlasSize, xPixelPos, xPixelPos + pixelSize.x);
+        const auto textureRegion = getTextureRegion(atlasSize, xPixelPos, xPixelPos + pixelSize.x, pixelSize.y);
         const auto info = Font::CharacterInfo{
-            .textureLeft = textureCoords.first,
-            .textureRight = textureCoords.second,
+            .textureRegion = textureRegion,
             .size = pixelSize,
             .bearing = glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
             .advance = static_cast<unsigned int>(face->glyph->advance.x)
         };
+        characters.emplace(c, info);
+        xPixelPos += pixelSize.x;
     }
     return characters;
 }
 
 
-std::tuple<Font::FontInfo, Texture> Font::loadFromFontFile(std::string_view fontFilePath, std::string name, int fontPixelSize) {
+std::tuple<Font::FontInfo, Texture> Font::loadFromFontFile(std::string_view fontFilePath, int fontPixelSize) {
     FT_Library ft;
     if (FT_Init_FreeType(&ft)){
         std::cerr << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
@@ -133,15 +138,14 @@ std::tuple<Font::FontInfo, Texture> Font::loadFromFontFile(std::string_view font
     const auto textureAtlasSize = getTextureAtlasSize(face, characterRange);
     const auto textureAtlas = buildTextureAtlas(face, characterRange, textureAtlasSize);
     const auto characters = getCharacterInfo(face, characterRange, textureAtlasSize);
-    std::cout << name << ": " << textureAtlasSize.x << ", " << textureAtlasSize.y << std::endl;
+    std::cout << fontFilePath << ": " << textureAtlasSize.x << ", " << textureAtlasSize.y << std::endl;
 
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4); // untested
 
     const auto fontInfo = FontInfo {
-        .name{std::move(name)},
-        .textureIdentifier{TextureIdentifier{fontFilePath}},
+        .textureIdentifier{TextureIdentifier{std::string{fontFilePath} + std::to_string(fontPixelSize)}},
         .characters{characters}
     };
     const auto texture = Texture{
