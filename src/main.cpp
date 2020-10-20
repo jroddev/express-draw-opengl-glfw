@@ -28,7 +28,8 @@ int main() {
     const auto textToRender = convertToRenderableText(context, Draw::TextBlock{
         .font {"assets/fonts/Arial.ttf"},
         .fontSize = 48,
-        .text{"Hello there from the text renderer!"}
+        .text{"[Hello there from the text renderer!]"},
+        .blockSize { 300.F, 100.F}
     });
 
     while(context.isRunning()) {
@@ -93,7 +94,13 @@ int main() {
         });
 
         Draw::draw(context, textToRender);
-
+        Draw::drawWireframe(context, Draw::Quad{
+                .position{0.F,0.F},
+                .size = {300.F, 100.F},
+                .rotation = 0.F,
+                .color{0.F, 1.F, 1.F, 0.2F},
+                .borderWidth=1.F
+        });
 
 
         Draw::endFrame(context);

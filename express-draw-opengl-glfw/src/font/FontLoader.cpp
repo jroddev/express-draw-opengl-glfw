@@ -146,7 +146,8 @@ std::tuple<Font::FontInfo, Texture> Font::loadFromFontFile(std::string_view font
 
     const auto fontInfo = FontInfo {
         .textureIdentifier{TextureIdentifier{std::string{fontFilePath} + std::to_string(fontPixelSize)}},
-        .characters{characters}
+        .characters{characters},
+        .lineHeight = fontPixelSize
     };
     const auto texture = Texture{
         textureAtlas,

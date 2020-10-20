@@ -21,6 +21,7 @@ namespace Font {
     struct FontInfo {
         TextureIdentifier textureIdentifier;
         FontCharacterData characters;
+        int lineHeight;
     };
 
     std::tuple<Font::FontInfo, Texture> loadFromFontFile(std::string_view fontFilePath, int fontPixelSize = 48);
