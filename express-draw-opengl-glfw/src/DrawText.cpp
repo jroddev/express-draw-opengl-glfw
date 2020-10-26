@@ -115,6 +115,10 @@ namespace Draw {
         static const auto textureRegionOffsetLocation = glGetUniformLocation(shader, "textureRegionOffset");
         static const auto textureRegionSizeLocation = glGetUniformLocation(shader, "textureRegionSize");
 
+        if (data.characters.empty()){
+            return;
+        }
+
         const auto mesh = context.quadMeshes.at(PIVOT_POINT::TOP_LEFT);
         const auto texture = context.textures.at(data.texture);
         texture.bind();

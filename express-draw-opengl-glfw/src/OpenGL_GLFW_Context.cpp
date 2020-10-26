@@ -49,7 +49,7 @@ Font::FontInfo Draw::OpenGL_GLFW_Context::getOrLoadFont(const std::string& fontP
     const auto fontIdentifier = fontPath + std::to_string(size);
     const auto entry = fonts.find(fontIdentifier);
     if (entry == fonts.end()) {
-        const auto [fontInfo, fontTexture] = Font::loadFromFontFile("assets/fonts/Arial.ttf");
+        const auto [fontInfo, fontTexture] = Font::loadFromFontFile("assets/fonts/Arial.ttf", size);
         fonts.emplace(
                 fontIdentifier,
                 fontInfo);

@@ -3,7 +3,7 @@
 
 RenderableText convertToRenderableText(Draw::OpenGL_GLFW_Context& context, const Draw::TextBlock& input) {
 
-    const auto fontData = context.getOrLoadFont(input.font, 48);
+    const auto fontData = context.getOrLoadFont(input.font, input.fontSize);
     float x = 0.F;
     float y = 0.F; // order constraint
     static const auto textToCharacterData = [&fontData, &x, &y, &input](auto c)->RenderableCharacter{
@@ -11,7 +11,7 @@ RenderableText convertToRenderableText(Draw::OpenGL_GLFW_Context& context, const
         const RenderableCharacter result = {
                 .transform{ Draw::Transform2D::from(
                         x + cd.bearing.x,
-                        y - cd.bearing.y + fontData.lineHeight,
+                        y - cd.bearing.y + static_cast<float>(fontData.lineHeight),
                         0.F,
                         cd.size.x, cd.size.y
                 )},
@@ -22,7 +22,7 @@ RenderableText convertToRenderableText(Draw::OpenGL_GLFW_Context& context, const
         // do wrap here if larger than block
         if (x > input.blockSize.x && c == ' ') {
             x = 0;
-            y += fontData.lineHeight;
+            y +=  static_cast<float>(fontData.lineHeight);
         }
         return result;
     };

@@ -7,7 +7,7 @@
 #include "express-draw/Camera.h"
 #include "express-draw/CameraTypes.h"
 #include "express-draw-opengl-glfw/TextRenderer.h"
-
+#include <chrono>
 
 int main() {
     std::cout << "Hello, World!!" << std::endl;
@@ -25,13 +25,22 @@ int main() {
             .zoom=1.F
     };
 
+    const auto uiCamera = Draw::OrthographicSceneCamera{
+            .position = {300, -200},
+            .zoom=1.F
+    };
+
     const auto textToRender = convertToRenderableText(context, Draw::TextBlock{
         .transform{Draw::Transform2D::from(0,0,0,1,1)},
         .blockSize { 300.F, 100.F},
-        .fontSize = 48,
+        .fontSize = 12,
         .font {"assets/fonts/Arial.ttf"},
-        .text{"[Hello there from the text renderer!]"},
+        .text{"Hello there from the text renderer!"},
     });
+
+    auto fps = RenderableText{.transform{}, .texture=Draw::TextureIdentifier{""}, .characters{}};
+    auto lastFPSUpdate = std::chrono::high_resolution_clock::now();
+    auto frameCounter = 0;
 
     while(context.isRunning()) {
         Draw::startFrame(context);
@@ -90,10 +99,46 @@ int main() {
         });
 
 
+        /////
+
+        Draw::setCamera(context, uiCamera, {
+                .size{context.openglWindow->width, context.openglWindow->height},
+                .up = Draw::UP_AXIS::NEGATIVE_Y
+        });
+
+        Draw::draw(context, Draw::Sprite{
+                .transform{ Draw::Transform2D::from(
+                        0.F,0.F,
+                        0.F,
+                        30.F, 30.F
+                )},
+                .color{1.F, 1.F, 1.F, 1.F},
+                .textureRegion {0.F, 0.F, 1.F, 1.F},
+                .texture{Draw::TextureIdentifier{"assets/textures/wooden_crate.png"}},
+                .pivotPoint = Draw::PIVOT_POINT::TOP_LEFT
+        });
+
+
         Draw::draw(context, textToRender);
+        Draw::draw(context, fps);
 
 
         Draw::endFrame(context);
+
+        frameCounter++;
+        auto now = std::chrono::high_resolution_clock::now();
+        auto fpsMillis = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastFPSUpdate).count();
+        if (fpsMillis > 1000) {
+            fps = convertToRenderableText(context, Draw::TextBlock{
+                    .transform{Draw::Transform2D::from(0,20,0,1,1)},
+                    .blockSize { 300.F, 100.F},
+                    .fontSize = 12,
+                    .font {"assets/fonts/Arial.ttf"},
+                    .text{std::to_string(frameCounter) + " FPS"},
+            });
+            frameCounter = 0;
+            lastFPSUpdate = now;
+        }
 
     }
 
