@@ -32,7 +32,7 @@ int main() {
 
     const auto textToRender = convertToRenderableText(context, Draw::TextBlock{
         .transform{Draw::Transform2D::from(0,0,0,1,1)},
-        .blockSize { 300.F, 100.F},
+        .blockSize { 100.F, 100.F},
         .fontSize = 12,
         .font {"assets/fonts/Arial.ttf"},
         .text{"Hello there from the text renderer!"},
@@ -162,7 +162,7 @@ int main() {
                     .blockSize { 100.F, 100.F},
                     .fontSize = 12,
                     .font {"assets/fonts/Arial.ttf"},
-                    .text{std::to_string(frameCounter) + " FPS"},
+                    .text{std::to_string(frameCounter) + "\nFPS"},
             });
             frameCounter = 0;
             lastFPSUpdate = now;

@@ -8,7 +8,8 @@ RenderableText convertToRenderableText(Draw::OpenGL_GLFW_Context& context, const
     float x = 0.F; // order constraint
     float y = 0.F; // order constraint
     const auto textToCharacterData = [&fontData, &x, &y, &input](auto c) -> RenderableCharacter{
-        const Font::CharacterInfo cd = fontData.characters.at(c);
+        const auto cleanedChar = c == '\n' ? ' ' : c;
+        const Font::CharacterInfo cd = fontData.characters.at(cleanedChar);
         const RenderableCharacter result = {
                 .transform{ Draw::Transform2D::from(
                         x + cd.bearing.x,
@@ -22,7 +23,7 @@ RenderableText convertToRenderableText(Draw::OpenGL_GLFW_Context& context, const
         x += (cd.advance >> 6); // bitshift by 6 to get value in pixels (2^6 = 64)
 
         // do wrap here if larger than block
-        if (x > input.blockSize.x && c == ' ') {
+        if (c == '\n' ||  x > input.blockSize.x && c == ' ') {
             x = 0;
             y +=  static_cast<float>(fontData.lineHeight);
         }
