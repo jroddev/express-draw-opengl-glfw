@@ -11,6 +11,8 @@
 
 #include <unordered_map>
 #include <express-draw-opengl-glfw/font/FontLoader.h>
+#include <express-draw/DrawTypes.h>
+#include <express-draw-opengl-glfw/mesh/OpenGLMeshProperties.h>
 
 
 namespace Draw {
@@ -31,6 +33,9 @@ namespace Draw {
 
         Texture getOrLoadTexture(TextureIdentifier identifier);
         Font::FontInfo getOrLoadFont(const std::string& fontPath, int size);
+
+        std::unordered_map<PIVOT_POINT, OpenGLMeshProperties> quadMeshes;
+        void loadQuadMeshes();
     };
 }
 

@@ -55,18 +55,17 @@ add_library(express-draw-opengl-glfw
         include/express-draw-opengl-glfw/OpenGLWindow.h
         src/OpenGLWindow.cpp
         src/DrawQuad.cpp
-        include/express-draw-opengl-glfw/mesh/TopLeftUnitQuad.h
-        include/express-draw-opengl-glfw/mesh/CenteredUnitQuad.h
+        include/express-draw-opengl-glfw/mesh/UnitQuad.h
         include/express-draw-opengl-glfw/mesh/Vertex.h
         src/Camera.cpp
         src/DrawSprite.cpp
         src/Texture.cpp
         src/DrawText.cpp
-        src/font/FontLoader.cpp include/express-draw-opengl-glfw/TextRenderer.h src/TextRenderer.cpp)
+        src/font/FontLoader.cpp include/express-draw-opengl-glfw/TextRenderer.h src/TextRenderer.cpp include/express-draw-opengl-glfw/mesh/OpenGLMeshProperties.h include/express-draw-opengl-glfw/mesh/OpenGLMeshBuilder.h)
 target_include_directories(express-draw-opengl-glfw
         PUBLIC
         ${express-draw_SOURCE_DIR}/include/
-        ${glm_SOURCE_DIRECTORY}
+        ${glm_SOURCE_DIR}
         ${stb_SOURCE_DIR}
         ${FREETYPE_INCLUDE_DIRS}
         include/)

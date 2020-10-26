@@ -3,105 +3,48 @@
 #include "express-draw/DrawTypes.h"
 #include "express-draw-opengl-glfw/OpenGL_GLFW_Context.h"
 #include <glm/gtc/type_ptr.hpp>
-#include "express-draw-opengl-glfw/mesh/TopLeftUnitQuad.h"
+#include "express-draw-opengl-glfw/mesh/UnitQuad.h"
 
 namespace Draw {
 
     namespace {
 
         constexpr const auto vertexShader = R""""(
-        #version 330 core
-        layout (location = 0) in vec2 aPos;
-        layout (location = 1) in vec2 aTexCoord;
+            #version 330 core
+            layout (location = 0) in vec2 aPos;
+            layout (location = 1) in vec2 aTexCoord;
 
-        uniform mat4 model;
-        uniform mat4 view;
-        uniform mat4 projection;
+            uniform mat4 model;
+            uniform mat4 view;
+            uniform mat4 projection;
 
-        uniform vec4 colorTint;
-        uniform vec2 textureRegionOffset;
-        uniform vec2 textureRegionSize;
+            uniform vec4 colorTint;
+            uniform vec2 textureRegionOffset;
+            uniform vec2 textureRegionSize;
 
-        out vec4 textureColorTint;
-        out vec2 textureCoord;
+            out vec4 textureColorTint;
+            out vec2 textureCoord;
 
-        void main() {
-            textureCoord = textureRegionOffset + (aTexCoord * textureRegionSize);
-            textureColorTint = colorTint;
-            gl_Position = projection * view * model * vec4(aPos, 0.0, 1.0);
-        }
-    )"""";
+            void main() {
+                textureCoord = textureRegionOffset + (aTexCoord * textureRegionSize);
+                textureColorTint = colorTint;
+                gl_Position = projection * view * model * vec4(aPos, 0.0, 1.0);
+            }
+        )"""";
 
         constexpr const auto fragmentShader = R""""(
-        #version 330 core
-        in vec2 textureCoord;
-        in vec4 textureColorTint;
-        uniform sampler2D textureSampler;
+            #version 330 core
+            in vec2 textureCoord;
+            in vec4 textureColorTint;
+            uniform sampler2D textureSampler;
 
-        out vec4 fragmentColor;
+            out vec4 fragmentColor;
 
-        void main() {
-            vec4 textureColor = texture(textureSampler, textureCoord);
-            fragmentColor = textureColor * textureColorTint;
-        }
-    )"""";
-
-        struct MeshProperties {
-            GLuint vao, vbo, ebo;
-            int indicesSize;
-        };
-
-        MeshProperties buildMesh() {
-            GLuint vao;
-            glGenVertexArrays(1, &vao); // glDeleteVertexArrays
-            glBindVertexArray(vao);
-
-            GLuint vbo;
-            glGenBuffers(1, &vbo);
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(
-                    GL_ARRAY_BUFFER,
-                    sizeof(TopLeftUnitQuad::vertices),
-                    TopLeftUnitQuad::vertices.data(),
-                    GL_STATIC_DRAW);
-
-            GLuint ebo;
-            glGenBuffers(1, &ebo);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-            glBufferData(
-                    GL_ELEMENT_ARRAY_BUFFER,
-                    sizeof(TopLeftUnitQuad::indices),
-                    TopLeftUnitQuad::indices.data(),
-                    GL_STATIC_DRAW);
-
-            glVertexAttribPointer(
-                    0,
-                    2,
-                    GL_FLOAT,
-                    GL_FALSE,
-                    TopLeftUnitQuad::stride,
-                    (void*) nullptr);
-            glEnableVertexAttribArray(0);
-
-            glVertexAttribPointer(
-                    1,
-                    2,
-                    GL_FLOAT, GL_FALSE,
-                    TopLeftUnitQuad::stride,
-                    (void*)(TopLeftUnitQuad::textureCoordIndexOffset * sizeof(float)));
-            glEnableVertexAttribArray(1);
-
-
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            glBindVertexArray(0);
-
-            return {
-                    .vao = vao,
-                    .vbo = vbo,
-                    .ebo = ebo,
-                    .indicesSize = TopLeftUnitQuad::indices.size()
-            };
-        }
+            void main() {
+                vec4 textureColor = texture(textureSampler, textureCoord);
+                fragmentColor = textureColor * textureColorTint;
+            }
+        )"""";
     }
 
     template<>
@@ -114,8 +57,7 @@ namespace Draw {
         static const auto textureRegionOffsetLocation = glGetUniformLocation(shader, "textureRegionOffset");
         static const auto textureRegionSizeLocation = glGetUniformLocation(shader, "textureRegionSize");
 
-        static const auto mesh = buildMesh();
-
+        const auto mesh = context.quadMeshes.at(data.pivotPoint);
         const auto texture = context.getOrLoadTexture(data.texture);
         texture.bind();
 

@@ -1,5 +1,5 @@
 #include <express-draw-opengl-glfw/OpenGL_GLFW_Context.h>
-#include <express-draw-opengl-glfw/mesh/TopLeftUnitQuad.h>
+#include <express-draw-opengl-glfw/mesh/UnitQuad.h>
 #include <express-draw-opengl-glfw/shader/Shader.h>
 #include "express-draw/Draw.h"
 #include <glm/gtc/type_ptr.hpp>
@@ -115,8 +115,7 @@ namespace Draw {
         static const auto textureRegionOffsetLocation = glGetUniformLocation(shader, "textureRegionOffset");
         static const auto textureRegionSizeLocation = glGetUniformLocation(shader, "textureRegionSize");
 
-        static const auto mesh = buildMesh();
-
+        const auto mesh = context.quadMeshes.at(PIVOT_POINT::TOP_LEFT);
         const auto texture = context.textures.at(data.texture);
         texture.bind();
 

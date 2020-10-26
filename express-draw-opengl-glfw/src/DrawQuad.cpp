@@ -3,7 +3,8 @@
 #include "express-draw/DrawTypes.h"
 #include "express-draw-opengl-glfw/OpenGL_GLFW_Context.h"
 #include <glm/gtc/type_ptr.hpp>
-#include "express-draw-opengl-glfw/mesh/TopLeftUnitQuad.h"
+#include <express-draw-opengl-glfw/mesh/UnitQuad.h>
+
 
 namespace Draw {
 
@@ -36,53 +37,6 @@ namespace Draw {
         }
     )"""";
 
-        struct MeshProperties {
-            GLuint vao, vbo, ebo;
-            int indicesSize;
-        };
-
-        MeshProperties buildMesh() {
-            GLuint vao;
-            glGenVertexArrays(1, &vao); // glDeleteVertexArrays
-            glBindVertexArray(vao);
-
-            GLuint vbo;
-            glGenBuffers(1, &vbo);
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(
-                    GL_ARRAY_BUFFER,
-                    sizeof(TopLeftUnitQuad::vertices),
-                    TopLeftUnitQuad::vertices.data(),
-                    GL_STATIC_DRAW);
-
-            GLuint ebo;
-            glGenBuffers(1, &ebo);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-            glBufferData(
-                    GL_ELEMENT_ARRAY_BUFFER,
-                    sizeof(TopLeftUnitQuad::indices),
-                    TopLeftUnitQuad::indices.data(),
-                    GL_STATIC_DRAW);
-
-            glVertexAttribPointer(
-                    0,
-                    2,
-                    GL_FLOAT,
-                    GL_FALSE,
-                    TopLeftUnitQuad::stride,
-                    (void*) nullptr);
-            glEnableVertexAttribArray(0);
-
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            glBindVertexArray(0);
-
-            return {
-                .vao = vao,
-                .vbo = vbo,
-                .ebo = ebo,
-                .indicesSize = TopLeftUnitQuad::indices.size()
-            };
-        }
     }
 
     template<>
@@ -92,7 +46,8 @@ namespace Draw {
         static const auto viewMatrixLocation = glGetUniformLocation(shader, "view");
         static const auto projectionMatrixLocation = glGetUniformLocation(shader, "projection");
         static const auto colorLocation = glGetUniformLocation(shader, "color");
-        static const auto mesh = buildMesh();
+
+        const auto mesh = context.quadMeshes.at(data.pivotPoint);
 
         //////////////////////////
 
@@ -114,7 +69,8 @@ namespace Draw {
         static const auto viewMatrixLocation = glGetUniformLocation(shader, "view");
         static const auto projectionMatrixLocation = glGetUniformLocation(shader, "projection");
         static const auto colorLocation = glGetUniformLocation(shader, "color");
-        static const auto mesh = buildMesh();
+
+        const auto mesh = context.quadMeshes.at(data.pivotPoint);
 
         //////////////////////////
 

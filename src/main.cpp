@@ -26,12 +26,11 @@ int main() {
     };
 
     const auto textToRender = convertToRenderableText(context, Draw::TextBlock{
-        .transform{Draw::Transform2D::from(0,0,45,1,1)},
+        .transform{Draw::Transform2D::from(0,0,0,1,1)},
         .blockSize { 300.F, 100.F},
         .fontSize = 48,
         .font {"assets/fonts/Arial.ttf"},
         .text{"[Hello there from the text renderer!]"},
-
     });
 
     while(context.isRunning()) {
@@ -48,39 +47,33 @@ int main() {
                         30.F, 30.F
                         )},
                 .color{0.F, 0.F, 1.F, 1.F},
-                .borderWidth=1.F
-        });
-
-        Draw::drawWireframe(context, Draw::Quad{
-                .transform{ Draw::Transform2D::from(
-                        5.F,5.F,
-                        0.F,
-                        30.F, 30.F
-                )},
-                .color{0.F, 1.F, 1.F, 1.F},
-                .borderWidth=1.F
+                .borderWidth=1.F,
+                .pivotPoint=Draw::PIVOT_POINT::BOTTOM_RIGHT
         });
 
         Draw::draw(context, Draw::Sprite{
                 .transform{ Draw::Transform2D::from(
-                        0.F,-50.F,
+                        0.F,0.F,
                         0.F,
                         30.F, 30.F
                 )},
                 .color{1.F, 1.F, 1.F, 1.F},
                 .textureRegion {0.F, 0.F, 1.F, 1.F},
                 .texture{Draw::TextureIdentifier{"assets/textures/wooden_crate.png"}},
+                .pivotPoint = Draw::PIVOT_POINT::CENTER
         });
+
 
         Draw::draw(context, Draw::Sprite{
                 .transform{ Draw::Transform2D::from(
-                        50.F,-50.F,
+                        0.F,0.F,
                         0.F,
                         30.F, 30.F
                 )},
                 .color{1.F, 0.F, 1.F, 1.F},
                 .textureRegion {0.5F, 0.F, 1.F, 1.F},
                 .texture{Draw::TextureIdentifier{"assets/textures/green_bush.png"}},
+                .pivotPoint=Draw::PIVOT_POINT::BOTTOM_LEFT
         });
 
 
@@ -97,27 +90,7 @@ int main() {
         });
 
 
-        Draw::draw(context, Draw::Sprite{
-                .transform{ Draw::Transform2D::from(
-                        -1000.F,-100.F,
-                        0.F,
-                        2867.F, 45.F
-                )},
-                .color{1.F, 1.F, 1.F, 1.F},
-                .textureRegion {0.F, 0.F, 1.F, 1.F},
-                .texture{Draw::TextureIdentifier{"assets/fonts/Arial.ttf48"}}
-        });
-
         Draw::draw(context, textToRender);
-        Draw::drawWireframe(context, Draw::Quad{
-                .transform{ Draw::Transform2D::from(
-                        0.F,0.F,
-                        0.F,
-                        300.F, 100.F
-                )},
-                .color{0.F, 1.F, 1.F, 0.2F},
-                .borderWidth=1.F
-        });
 
 
         Draw::endFrame(context);

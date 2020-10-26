@@ -1,10 +1,13 @@
 #include "express-draw-opengl-glfw/OpenGL_GLFW_Context.h"
+#include "express-draw-opengl-glfw/mesh/OpenGLMeshBuilder.h"
 
 #include <filesystem>
 #include <iostream>
+#include <express-draw-opengl-glfw/mesh/UnitQuad.h>
 
 Draw::OpenGL_GLFW_Context::OpenGL_GLFW_Context(const OpenGLWindow::Props& windowProps):
     openglWindow(std::make_unique<OpenGLWindow>(windowProps)){
+    loadQuadMeshes();
 }
 
 bool Draw::OpenGL_GLFW_Context::isRunning() const {
@@ -57,5 +60,33 @@ Font::FontInfo Draw::OpenGL_GLFW_Context::getOrLoadFont(const std::string& fontP
     } else {
         return entry->second;
     }
+}
+
+void Draw::OpenGL_GLFW_Context::loadQuadMeshes() {
+    quadMeshes.emplace(PIVOT_POINT::CENTER, uploadMeshToOpenGL(
+            CenteredUnitQuad::vertices,
+            CenteredUnitQuad::indices,
+            CenteredUnitQuad::stride,
+            CenteredUnitQuad::textureCoordIndexOffset));
+    quadMeshes.emplace(PIVOT_POINT::TOP_LEFT, uploadMeshToOpenGL(
+            TopLeftUnitQuad::vertices,
+            TopLeftUnitQuad::indices,
+            TopLeftUnitQuad::stride,
+            TopLeftUnitQuad::textureCoordIndexOffset));
+    quadMeshes.emplace(PIVOT_POINT::TOP_RIGHT, uploadMeshToOpenGL(
+            TopRightUnitQuad::vertices,
+            TopRightUnitQuad::indices,
+            TopRightUnitQuad::stride,
+            TopRightUnitQuad::textureCoordIndexOffset));
+    quadMeshes.emplace(PIVOT_POINT::BOTTOM_LEFT, uploadMeshToOpenGL(
+            BottomLeftUnitQuad::vertices,
+            BottomLeftUnitQuad::indices,
+            BottomLeftUnitQuad::stride,
+            BottomLeftUnitQuad::textureCoordIndexOffset));
+    quadMeshes.emplace(PIVOT_POINT::BOTTOM_RIGHT, uploadMeshToOpenGL(
+            BottomRightUnitQuad::vertices,
+            BottomRightUnitQuad::indices,
+            BottomRightUnitQuad::stride,
+            BottomRightUnitQuad::textureCoordIndexOffset));
 }
 
