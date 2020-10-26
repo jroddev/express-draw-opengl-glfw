@@ -122,18 +122,29 @@ int main() {
 
         Draw::draw(context, fps);
 
-        const auto boundingTransform = Draw::Transform2D::from(fps.boundingBox.x, fps.boundingBox.y, 0, fps.boundingBox.width, fps.boundingBox.height);
-        const auto adjustedBoundingMatrix = fps.transform.getGetLocalSpaceMatrix() * boundingTransform.getGetLocalSpaceMatrix();
-        const auto adjustedBoundingTransform = Draw::Transform2D::from(adjustedBoundingMatrix);
+
         Draw::drawWireframe(context, Draw::Quad{
-                .transform = { Draw::Transform2D::from(50,20,0,100,100) },
+                .transform = Draw::Transform2D::multi(
+                        fps.transform,
+                        Draw::Transform2D::from(
+                                0,0,
+                                0,
+                                100.F,
+                                100.F)),
                 .color = {0.F, 1.F, 0.F, 1.F},
                 .borderWidth = 0.2F,
                 .pivotPoint = Draw::PIVOT_POINT::TOP_LEFT
         });
 
         Draw::drawWireframe(context, Draw::Quad{
-                .transform = adjustedBoundingTransform,
+                .transform = Draw::Transform2D::multi(
+                        fps.transform,
+                        Draw::Transform2D::from(
+                                fps.boundingBox.x,
+                                fps.boundingBox.y,
+                                0,
+                                fps.boundingBox.width,
+                                fps.boundingBox.height)),
                 .color = {1.F, 0.F, 0.F, 1.F},
                 .borderWidth = 0.2F,
                 .pivotPoint = Draw::PIVOT_POINT::TOP_LEFT
@@ -147,7 +158,7 @@ int main() {
         auto fpsMillis = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastFPSUpdate).count();
         if (fpsMillis > 1000) {
             fps = convertToRenderableText(context, Draw::TextBlock{
-                    .transform{Draw::Transform2D::from(50,20,0,1,1)},
+                    .transform{Draw::Transform2D::from(50,20,30,1,1)},
                     .blockSize { 100.F, 100.F},
                     .fontSize = 12,
                     .font {"assets/fonts/Arial.ttf"},

@@ -1,7 +1,5 @@
 #include "express-draw-opengl-glfw/TextRenderer.h"
 #include <algorithm>
-#include <iostream>
-
 
 RenderableText convertToRenderableText(Draw::OpenGL_GLFW_Context& context, const Draw::TextBlock& input) {
     using namespace std;
@@ -21,7 +19,6 @@ RenderableText convertToRenderableText(Draw::OpenGL_GLFW_Context& context, const
                 .color {0.F, 1.F, 0.F, 1.F},
                 .textureRegion = cd.textureRegion,
         };
-        cout << "x before advance: " << c << " -> " << x << endl;
         x += (cd.advance >> 6); // bitshift by 6 to get value in pixels (2^6 = 64)
 
         // do wrap here if larger than block
@@ -34,7 +31,6 @@ RenderableText convertToRenderableText(Draw::OpenGL_GLFW_Context& context, const
 
     const auto characters = input.text | views::transform(textToCharacterData);
     const auto outputCharacters = std::vector<RenderableCharacter>{characters.begin(), characters.end()};
-    cout << "after transform" << endl;
 
     const auto maxX = outputCharacters
             | views::transform([](auto a){return a.transform.position.x + a.transform.scale.x;});
