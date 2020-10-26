@@ -18,6 +18,7 @@ struct RenderableCharacter {
 
 struct RenderableText {
     Draw::Transform2D transform;
+    Draw::Rect boundingBox;
     Draw::TextureIdentifier texture;
     std::vector<RenderableCharacter> characters;
 };

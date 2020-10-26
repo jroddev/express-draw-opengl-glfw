@@ -27,7 +27,7 @@ namespace CenteredUnitQuad {
 
 namespace {
     constexpr std::array<Vertex, 4> calculateFromCentered(const glm::vec2 offset) {
-        const auto convert = [offset](Vertex in) constexpr -> Vertex {
+        const auto convert = [&offset](Vertex in) constexpr -> Vertex {
             return Vertex{
                     .position = {
                             in.position.x + offset.x,
