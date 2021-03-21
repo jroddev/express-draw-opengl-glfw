@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <string>
 
-class GLFWwindow;
+struct GLFWwindow;
 
 class OpenGLWindow {
 public:

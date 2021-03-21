@@ -11,7 +11,7 @@ public:
     Texture(std::string textureFileName);
     Texture(OpenGLTexture openGlTexture, glm::ivec2 size, int colorChannels);
 
-    uint width, height;
+    unsigned int width, height;
     int colorChannels;
     unsigned int textureId; // opengl resource id
     void bind() const;

@@ -5,7 +5,6 @@
 #include "express-draw/TextureIdentifier.h"
 #include "express-draw-opengl-glfw/font/FontLoader.h"
 #include "OpenGL_GLFW_Context.h"
-#include <ranges>
 #include <glm/glm.hpp>
 #include <express-draw/DrawTypes.h>
 

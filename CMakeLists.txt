@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.17)
 project(
         express_draw-sample
         VERSION 0.1.0
@@ -6,6 +6,7 @@ project(
 )
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 configure_file(assets/textures/wooden_crate.png assets/textures/wooden_crate.png COPYONLY)
 configure_file(assets/textures/green_bush.png assets/textures/green_bush.png COPYONLY)

@@ -4,7 +4,6 @@
 
 #include "Vertex.h"
 #include <array>
-#include <ranges>
 
 namespace CenteredUnitQuad {
     constexpr const auto vertices = std::array<Vertex, 4>{

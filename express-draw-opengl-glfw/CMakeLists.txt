@@ -1,6 +1,8 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.17)
 include(FetchContent)
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 project(
         express-draw-opengl-glfw
         VERSION 0.1.0
@@ -46,6 +48,13 @@ if(FREETYPE_FOUND)
 endif()
 
 
+FetchContent_Declare(
+        ranges-v3
+        GIT_REPOSITORY https://github.com/ericniebler/range-v3
+        GIT_TAG 0.10.0)
+FetchContent_MakeAvailable(ranges-v3)
+
+
 add_library(express-draw-opengl-glfw
         src/OpenGL_GLFW_Context.cpp
         src/Frame.cpp src/DrawLine.cpp
@@ -67,6 +76,7 @@ target_include_directories(express-draw-opengl-glfw
         ${express-draw_SOURCE_DIR}/include/
         ${glm_SOURCE_DIR}
         ${stb_SOURCE_DIR}
+        ${ranges-v3_SOURCE_DIR}/include/
         ${FREETYPE_INCLUDE_DIRS}
         include/)
 
@@ -74,3 +84,8 @@ target_link_libraries(express-draw-opengl-glfw OpenGL::GL)
 target_link_libraries(express-draw-opengl-glfw glfw)
 target_link_libraries(express-draw-opengl-glfw libglew_shared)
 target_link_libraries(express-draw-opengl-glfw ${FREETYPE_LIBRARIES})
+
+set(BUILD_FLAGS "${BUILD_FLAGS} -std=c++20 -Wall -Wextra -pedantic")
+# Warnings as Errors
+#set(BUILD_FLAGS "${BUILD_FLAGS} -Werror")
+set_target_properties(express-draw-opengl-glfw PROPERTIES COMPILE_FLAGS ${BUILD_FLAGS})

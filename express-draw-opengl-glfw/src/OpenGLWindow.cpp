@@ -4,17 +4,53 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-OpenGLWindow::OpenGLWindow(const Props& props) {
+void debugMessageCallback(
+        GLenum source,
+        GLenum type,
+        GLuint id,
+        GLenum severity,
+        GLsizei length,
+        const GLchar *message,
+        const void *userParam) {
+    switch (severity) {
+        case GL_DEBUG_SEVERITY_NOTIFICATION:
+            std::cout << "OPENGL:NOTIF: " << message << std::endl;
+            break;
+        case GL_DEBUG_SEVERITY_LOW:
+            std::cout << "OPENGL:INFO: " << message << std::endl;
+            break;
+        case GL_DEBUG_SEVERITY_MEDIUM:
+            std::cerr << "OPENGL:WARNING: " << message << std::endl;
+            break;
+        case GL_DEBUG_SEVERITY_HIGH:
+            std::cerr << "OPENGL:ERROR: " << message << std::endl;
+            break;
+        default:
+            std::cerr
+                    << "OPENGL:UNKNOWN:severity:"
+                    << std::hex
+                    << severity
+                    << std::dec
+                    << ", message: "
+                    << message
+                    << std::endl;
+    }
+}
+
+OpenGLWindow::OpenGLWindow(const Props &props) {
     if (!glfwInit()) {
         throw std::runtime_error("GLFW Initialization failed");
     }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE );
+    glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
+#if __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
-    glfwSetErrorCallback([](int error, const char* description){
+    glfwSetErrorCallback([](int error, const char *description) {
         std::cerr << "GLFW Error [" << error << "]: " << description << std::endl;
     });
 
@@ -27,16 +63,17 @@ OpenGLWindow::OpenGLWindow(const Props& props) {
             nullptr,
             nullptr
     );
+    assert(window != nullptr);
     glfwMakeContextCurrent(window);
-    glfwSetWindowUserPointer(window, static_cast<void*>(this));
+    glfwSetWindowUserPointer(window, static_cast<void *>(this));
 //    glfwSetKeyCallback(window, key_callback);
 //    glfwSetScrollCallback(window, scroll_callback);
 //    glfwSetMouseButtonCallback(window, mouse_callback);
 
 
-    const auto sizeChanged = [](GLFWwindow* _window, int _width, int _height){
-        glViewport(0,0, _width, _height);
-        auto self = static_cast<OpenGLWindow*>(glfwGetWindowUserPointer(_window));
+    const auto sizeChanged = [](GLFWwindow *_window, int _width, int _height) {
+        glViewport(0, 0, _width, _height);
+        auto self = static_cast<OpenGLWindow *>(glfwGetWindowUserPointer(_window));
         self->width = _width;
         self->height = _height;
     };
@@ -48,34 +85,13 @@ OpenGLWindow::OpenGLWindow(const Props& props) {
         throw std::runtime_error("GLFW GLEW Initialization failed: " + errorString);
     }
 
-    if (!GLEW_VERSION_4_3) {
-        throw std::runtime_error("GLEW_VERSION_4_3 not available");
+    if (!GLEW_VERSION_4_1) {
+        throw std::runtime_error("GLEW_VERSION_4_1 not available");
     }
 
-    glDebugMessageCallback(
-            [](
-                    GLenum source,
-                    GLenum type,
-                    GLuint id,
-                    GLenum severity,
-                    GLsizei length,
-                    const GLchar* message,
-                    const void* userParam){
-                switch (severity) {
-                    case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "OPENGL:NOTIF: " << message << std::endl; break;
-                    case GL_DEBUG_SEVERITY_LOW: std::cout << "OPENGL:INFO: " << message << std::endl; break;
-                    case GL_DEBUG_SEVERITY_MEDIUM: std::cerr << "OPENGL:WARNING: " << message << std::endl; break;
-                    case GL_DEBUG_SEVERITY_HIGH: std::cerr << "OPENGL:ERROR: " << message << std::endl; break;
-                    default: std::cerr
-                                << "OPENGL:UNKNOWN:severity:"
-                                << std::hex
-                                << severity
-                                << std::dec
-                                << ", message: "
-                                << message
-                                << std::endl;
-                }
-            }, nullptr);
+#ifndef __APPLE__
+    glDebugMessageCallback(debugMessageCallback, nullptr);
+#endif
 
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_BLEND);

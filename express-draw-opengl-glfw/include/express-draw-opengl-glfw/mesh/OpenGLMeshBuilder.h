@@ -3,10 +3,12 @@
 #define EXPRESS_DRAW_SAMPLE_OPENGLMESHBUILDER_H
 
 #include "OpenGLMeshProperties.h"
+#include "Vertex.h"
 
+template<size_t VertexCount, size_t IndexCount>
 OpenGLMeshProperties uploadMeshToOpenGL(
-        auto vertices,
-        auto indices,
+        const std::array<Vertex, VertexCount>& vertices,
+        const std::array<int, IndexCount>& indices,
         int stride,
         int textureCoordIndexOffset) {
     GLuint vao;
@@ -56,7 +58,7 @@ OpenGLMeshProperties uploadMeshToOpenGL(
             .vao = vao,
             .vbo = vbo,
             .ebo = ebo,
-            .indicesSize = indices.size()
+            .indicesSize = static_cast<int>(indices.size())
     };
 }
 

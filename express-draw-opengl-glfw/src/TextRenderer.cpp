@@ -1,5 +1,6 @@
 #include "express-draw-opengl-glfw/TextRenderer.h"
 #include <algorithm>
+#include <range/v3/all.hpp>
 
 RenderableText convertToRenderableText(Draw::OpenGL_GLFW_Context& context, const Draw::TextBlock& input) {
     using namespace std;
@@ -23,21 +24,21 @@ RenderableText convertToRenderableText(Draw::OpenGL_GLFW_Context& context, const
         x += (cd.advance >> 6); // bitshift by 6 to get value in pixels (2^6 = 64)
 
         // do wrap here if larger than block
-        if (c == '\n' ||  x > input.blockSize.x && c == ' ') {
+        if (c == '\n' ||  (x > input.blockSize.x && c == ' ')) {
             x = 0;
             y +=  static_cast<float>(fontData.lineHeight);
         }
         return result;
     };
 
-    const auto characters = input.text | views::transform(textToCharacterData);
+    const auto characters = input.text | ranges::views::transform(textToCharacterData);
     const auto outputCharacters = std::vector<RenderableCharacter>{characters.begin(), characters.end()};
 
     const auto maxX = outputCharacters
-            | views::transform([](auto a){return a.transform.position.x + a.transform.scale.x;});
+            | ranges::views::transform([](auto a){return a.transform.position.x + a.transform.scale.x;});
 
     const auto maxY = outputCharacters
-             | views::transform([](auto a){return a.transform.position.y + a.transform.scale.y;});
+             | ranges::views::transform([](auto a){return a.transform.position.y + a.transform.scale.y;});
 
     return RenderableText {
             .transform = input.transform,
