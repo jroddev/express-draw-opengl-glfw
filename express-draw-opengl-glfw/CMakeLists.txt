@@ -70,7 +70,7 @@ add_library(express-draw-opengl-glfw
         src/DrawSprite.cpp
         src/Texture.cpp
         src/DrawText.cpp
-        src/font/FontLoader.cpp include/express-draw-opengl-glfw/TextRenderer.h src/TextRenderer.cpp include/express-draw-opengl-glfw/mesh/OpenGLMeshProperties.h include/express-draw-opengl-glfw/mesh/OpenGLMeshBuilder.h)
+        src/font/FontLoader.cpp include/express-draw-opengl-glfw/TextRenderer.h src/TextRenderer.cpp include/express-draw-opengl-glfw/mesh/OpenGLMeshProperties.h include/express-draw-opengl-glfw/mesh/OpenGLMeshBuilder.h include/express-draw-opengl-glfw/InputHandler.h)
 target_include_directories(express-draw-opengl-glfw
         PUBLIC
         ${express-draw_SOURCE_DIR}/include/

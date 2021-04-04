@@ -13,7 +13,7 @@
 #include <express-draw-opengl-glfw/font/FontLoader.h>
 #include <express-draw/DrawTypes.h>
 #include <express-draw-opengl-glfw/mesh/OpenGLMeshProperties.h>
-
+#include <express-draw-opengl-glfw/InputHandler.h>
 
 namespace Draw {
 
@@ -21,7 +21,8 @@ namespace Draw {
     public:
         explicit OpenGL_GLFW_Context(const OpenGLWindow::Props& windowProps);
         void addDirectoryToFileHashes(std::string_view path);
-        bool isRunning() const;
+        [[nodiscard]] bool isRunning() const;
+        void setInputHandler(InputHandler* handler);
 
         std::unique_ptr<OpenGLWindow> openglWindow;
         glm::mat4 cameraViewMatrix{};
@@ -36,6 +37,9 @@ namespace Draw {
 
         std::unordered_map<PIVOT_POINT, OpenGLMeshProperties> quadMeshes;
         void loadQuadMeshes();
+
+    private:
+        InputHandler* inputHandler;
     };
 }
 
