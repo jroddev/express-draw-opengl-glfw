@@ -90,13 +90,3 @@ void Draw::OpenGL_GLFW_Context::loadQuadMeshes() {
             BottomRightUnitQuad::textureCoordIndexOffset));
 }
 
-void Draw::OpenGL_GLFW_Context::setInputHandler(InputHandler* handler) {
-    this->inputHandler = handler;
-    auto keyCallback = []( GLFWwindow* window, int key, int scancode, int action, int mods ) {
-        auto me = (OpenGL_GLFW_Context*)glfwGetWindowUserPointer( window );
-        if (me->inputHandler)
-            me->inputHandler->receiveInput(key, scancode, action, mods );
-    };
-    glfwSetKeyCallback(this->openglWindow->window, keyCallback );
-}
-

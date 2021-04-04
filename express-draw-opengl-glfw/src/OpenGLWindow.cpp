@@ -3,6 +3,7 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <express-draw-opengl-glfw/InputHandler.h>
 
 void debugMessageCallback(
         GLenum source,
@@ -109,3 +110,12 @@ bool OpenGLWindow::shouldClose() const {
     return glfwWindowShouldClose(window);
 }
 
+void OpenGLWindow::setInputHandler(InputHandler* handler) {
+    this->inputHandler = handler;
+    auto keyCallback = []( GLFWwindow* window, int key, int scancode, int action, int mods ) {
+        auto me = static_cast<OpenGLWindow*>(glfwGetWindowUserPointer( window ));
+        if (me->inputHandler)
+            me->inputHandler->receiveInput(key, scancode, action, mods );
+    };
+    glfwSetKeyCallback(this->window, keyCallback );
+}

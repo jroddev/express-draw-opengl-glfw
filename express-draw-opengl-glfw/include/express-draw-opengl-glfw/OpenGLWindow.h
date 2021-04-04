@@ -5,6 +5,7 @@
 
 #include <glm/glm.hpp>
 #include <string>
+#include "InputHandler.h"
 
 struct GLFWwindow;
 
@@ -18,10 +19,13 @@ public:
     explicit OpenGLWindow(const Props& props);
     ~OpenGLWindow();
     [[nodiscard]] bool shouldClose() const;
+    void setInputHandler(InputHandler* handler);
 
     GLFWwindow* window;
     int width, height;
 
+private:
+    InputHandler* inputHandler;
 };
 
 #endif
