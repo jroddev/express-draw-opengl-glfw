@@ -3,7 +3,6 @@
 #include <range/v3/all.hpp>
 
 RenderableText convertToRenderableText(Draw::OpenGL_GLFW_Context& context, const Draw::TextBlock& input) {
-    using namespace std;
 
     const auto fontData = context.getOrLoadFont(input.font, input.fontSize);
     float x = 0.F; // order constraint
