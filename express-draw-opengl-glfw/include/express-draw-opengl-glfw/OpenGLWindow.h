@@ -5,6 +5,7 @@
 
 #include <glm/glm.hpp>
 #include <string>
+#include <functional>
 #include "InputHandler.h"
 
 struct GLFWwindow;
@@ -14,6 +15,7 @@ public:
     struct Props {
         std::string_view title;
         glm::vec2 size;
+        std::function<void(void)> preCreateWindowHook;
     };
 
     explicit OpenGLWindow(const Props& props);

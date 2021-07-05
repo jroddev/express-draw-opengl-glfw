@@ -57,6 +57,11 @@ OpenGLWindow::OpenGLWindow(const Props &props) {
 
     width = props.size.x;
     height = props.size.y;
+
+    if (props.preCreateWindowHook) {
+        props.preCreateWindowHook();
+    }
+
     window = glfwCreateWindow(
             width,
             height,
