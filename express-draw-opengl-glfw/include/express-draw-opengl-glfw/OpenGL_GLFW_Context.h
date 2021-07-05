@@ -36,6 +36,7 @@ namespace Draw {
         std::unordered_map<PIVOT_POINT, OpenGLMeshProperties> quadMeshes;
         void loadQuadMeshes();
 
+        glm::vec4 clearColor = glm::vec4(0.3, 0.3, 0.35, 1.0);
     };
 }
 
