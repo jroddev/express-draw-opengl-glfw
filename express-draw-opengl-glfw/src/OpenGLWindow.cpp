@@ -120,7 +120,22 @@ void OpenGLWindow::setInputHandler(InputHandler* handler) {
     auto keyCallback = []( GLFWwindow* window, int key, int scancode, int action, int mods ) {
         auto me = static_cast<OpenGLWindow*>(glfwGetWindowUserPointer( window ));
         if (me->inputHandler)
-            me->inputHandler->receiveInput(key, scancode, action, mods );
+            me->inputHandler->receiveKeyboardInput(key, scancode, action, mods);
     };
     glfwSetKeyCallback(this->window, keyCallback );
+
+    auto mouseButtonCallback = []( GLFWwindow* window, int button, int action, int mods ) {
+        auto me = static_cast<OpenGLWindow*>(glfwGetWindowUserPointer( window ));
+        if (me->inputHandler)
+            me->inputHandler->receiveMouseButton(button, action, mods);
+    };
+    glfwSetMouseButtonCallback(this->window, mouseButtonCallback);
+
+    auto mousePositionCallback = []( GLFWwindow* window, double xPos, double yPos ) {
+        auto me = static_cast<OpenGLWindow*>(glfwGetWindowUserPointer( window ));
+        if (me->inputHandler)
+            me->inputHandler->receiveMousePosition(xPos, yPos);
+    };
+    glfwSetCursorPosCallback(this->window, mousePositionCallback);
+
 }
